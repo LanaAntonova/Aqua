@@ -11,14 +11,14 @@ enemy::enemy(Image &image, float X, float Y, float W, float H) : fish(image, X, 
 void enemy::checkCollisionWithMap(float Dx, float Dy){
 	for (unsigned i = y / 32; i < (y + h) / 32; i++)
 	for (unsigned j = x / 32; j<(x + w) / 32; j++){
-		if (p_TileMap[i][j] == '3' || p_TileMap[i][j] == '4'){	// Проверка столкновений с границами карты
+		if (e_TileMap[i][j] == '3' || e_TileMap[i][j] == '4'){	// Проверка столкновений с границами карты
 			if (Dx>0){
 				x = j * 32 - w; dx = 0.08f;
-				dir = rand() % (2);
+				dir = 0;
 			}
 			else if (Dx<0){
 				x = j * 32 + 32; dx = 0.08f;
-				dir = rand() % (2);
+				dir = 1;
 			}
 		}
 	}
@@ -26,24 +26,29 @@ void enemy::checkCollisionWithMap(float Dx, float Dy){
 
 // Функция движения врага
 void enemy::update(float time){
-	switch (dir)
-	{
-	case right:	//вправо
-		dx = speed;
-		CurrentFrame += 0.005*time;
-		if (CurrentFrame > 3) CurrentFrame -= 3;
-		sprite.setTextureRect(IntRect(40 * int(CurrentFrame) + 40, 0, -40, 40));	// Анимация движения вправо
-		break;
-	case left:	//влево
-		dx = -speed;
-		CurrentFrame += 0.005*time;											
-		if (CurrentFrame > 3) CurrentFrame -= 3;							
-		sprite.setTextureRect(IntRect(40 * int(CurrentFrame), 0, 40, 40));	// Анимация движения влево
-		break;
+	if (life) {
+		switch (dir)
+		{
+		case right:	//вправо
+			dx = speed;
+			CurrentFrame += 0.005*time;
+			if (CurrentFrame > 3) CurrentFrame -= 3;
+			sprite.setTextureRect(IntRect(39 * int(CurrentFrame) + 39, 0, -39, 34));	// Анимация движения вправо
+			break;
+		case left:	//влево
+			dx = -speed;
+			CurrentFrame += 0.005*time;
+			if (CurrentFrame > 3) CurrentFrame -= 3;
+			sprite.setTextureRect(IntRect(39 * int(CurrentFrame), 0, 39, 34));	// Анимация движения влево
+			break;
+		}
+
+		x += dx*time;	//движение по X
+		checkCollisionWithMap(dx, 0.f);	// Вызов функции столкновений по X
+
+		sprite.setPosition(x, y);	// Вывод спрайта в позицию (x, y)
+		if (health <= 0) {
+			life = false;
+		}
 	}
-
-	x += dx*time;	//движение по X
-	checkCollisionWithMap(dx, 0.f);	// Вызов функции столкновений по X
-
-	sprite.setPosition(x, y);	// Вывод спрайта в позицию (x, y)
 }

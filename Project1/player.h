@@ -5,8 +5,6 @@
 
 class player:public fish{	// Класс "игрока"
 public:
-	unsigned health;
-
 	player(Image &image, float X, float Y, float W, float H);	// Конструктор "игрока"	
 	~player();	// Деструктор "игрока"
 	void update(float time);	// Функция движения игрока

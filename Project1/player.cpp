@@ -1,8 +1,7 @@
 #include "player.h"	// Подключение класса "игрока"
 
 player::player(Image &image, float X, float Y, float W, float H) : fish(image, X, Y, W, H){	// Конструктор "игрока" с параметрами
-	health = 3;		// 3 жизни
-	sprite.setTextureRect(IntRect(36, 36, -w, h));	//Задаем спрайту прямоугольник
+	sprite.setTextureRect(IntRect(36, 35, -w, h));	//Задаем спрайту прямоугольник
 }
 
 player::~player() {
@@ -51,7 +50,6 @@ void player::checkCollisionWithMap(float Dx, float Dy)
 		}
 		if (p_TileMap[i][j] == '5') {	// Поедание креветки
 			health++;
-			sprite.setScale(Vector2f(1.1f, 1.1f));	// Рост игрока
 			p_TileMap[i][j] = ' ';
 		}
 	}
@@ -68,25 +66,25 @@ void player::update(float time)
 			dx = speed;
 			CurrentFrame += 0.005*time;
 			if (CurrentFrame > 3) CurrentFrame -= 3;
-			sprite.setTextureRect(IntRect(36 * int(CurrentFrame) + 36, 36, -36, 36)); // Анимация движения вправо
+			sprite.setTextureRect(IntRect(36 * int(CurrentFrame) + 36, 35, -36, 19)); // Анимация движения вправо
 			break;
 		case left:	//влево
 			dx = -speed;
 			CurrentFrame += 0.005*time;
 			if (CurrentFrame > 3) CurrentFrame -= 3;
-			sprite.setTextureRect(IntRect(36 * int(CurrentFrame), 36, 36, 36));	// Анимация движения влево
+			sprite.setTextureRect(IntRect(36 * int(CurrentFrame), 35, 36, 19));	// Анимация движения влево
 			break;
 		case down:	//вниз
 			dy = speed;
 			CurrentFrame += 0.005*time;
 			if (CurrentFrame > 3) CurrentFrame -= 3;
-			sprite.setTextureRect(IntRect(36 * int(CurrentFrame), 0, 36, 36));	// Анимация движения вниз
+			sprite.setTextureRect(IntRect(22 * int(CurrentFrame), 0, 22, 35));	// Анимация движения вниз
 			break;
 		case up:	//вверх
 			dy = -speed;
 			CurrentFrame += 0.005*time;
 			if (CurrentFrame > 3) CurrentFrame -= 3;
-			sprite.setTextureRect(IntRect(36 * int(CurrentFrame), 72, 36, 36));	// Анимация движения вверх
+			sprite.setTextureRect(IntRect(24 * int(CurrentFrame), 54, 24, 34));	// Анимация движения вверх
 			break;
 		}
 
@@ -99,6 +97,7 @@ void player::update(float time)
 		sprite.setPosition(x, y);	// Вывод спрайта в позицию (x, y)
 		if (health <= 0) {
 			life = false;
+			sprite.setTextureRect(IntRect(66, 0, 35, 18));
 		}
 	}
 }

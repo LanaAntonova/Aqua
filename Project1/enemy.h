@@ -11,7 +11,7 @@ public:
 	void checkCollisionWithMap(float Dx, float Dy);	// Функция взаимодействия с картой
 	void update(float time);	// Функция движения
 	
-	std::string* p_TileMap;
-	void setTileMap(std::string* TileMap){ p_TileMap = TileMap; }	// Текущее значение TileMap
+	std::string* e_TileMap;
+	void setTileMap(std::string* TileMap){ e_TileMap = TileMap; }	// Текущее значение TileMap
 };
 #endif

@@ -4,7 +4,8 @@ using namespace sf;
 
 fish::fish(Image &image, float X, float Y, float W, float H)	// Конструктор "рыбки" с параметрами
 {
-	life = true; 
+	life = true;
+	health = 5;
 	w = W; h = H;
 	x = X; y = Y; 
 	dx = 0.f; dy = 0.f;

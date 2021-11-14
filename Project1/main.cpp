@@ -7,7 +7,7 @@
 using namespace sf;
 using namespace std;
 
-//======================	Игровая карта	======================//
+/*****	Игровая карта	*****/
 #define HEIGHT_MAP 17	// высота карты
 #define WIDTH_MAP 35	// ширина карты 
 string TileMap[HEIGHT_MAP] = {
@@ -29,7 +29,7 @@ string TileMap[HEIGHT_MAP] = {
 	"3                                 4",
 	"30000000000000000000000000000000004",
 };
-//=============	Произвольная генерация креветок	==================//
+/*****	Произвольная генерация креветок	*****/
 void randShrimp(){
 	int randX = 0;	int randY = 0;
 	srand(time(0));		// рандом	
@@ -43,12 +43,10 @@ void randShrimp(){
 		}
 	}
 }
-//================================================================//
-
-int main()
-{
+/*****	Функция игры	*****/
+bool beginGame(){
 	RenderWindow window(VideoMode(1120, 544), "Aquarium");	// Окно приложения
-
+	
 	// Шрифт
 	Font font;
 	font.loadFromFile("CyrilicOld.ttf");
@@ -74,7 +72,7 @@ int main()
 	list <enemy*> enemies;	// Список врагов
 	int countEnemy = 3;		// Количество врагов
 	while (countEnemy>0){	// Генерация случайного расположения объектов класса "враг"
-		enemies.push_back(new enemy(i_enemy, 40 + rand() % 1080, 40 + rand() % 504, 40, 40));
+		enemies.push_back(new enemy(i_enemy, 80 + rand() % 1040, 80 + rand() % 464, 40, 40));
 		countEnemy--;
 	}
 
@@ -87,13 +85,13 @@ int main()
 	{
 		// Таймер по системному времени
 		float time = clock.getElapsedTime().asMicroseconds();
-		time = time / 600;
+		time = time / 800;
 		clock.restart();
 
 		// Закрытие окна по клавишам
 		while (window.pollEvent(event))
 		{
-			if ((event.type == Event::Closed) || (Keyboard::isKeyPressed(Keyboard::Escape)))	
+			if (event.type == Event::Closed) //|| (Keyboard::isKeyPressed(Keyboard::Escape)))	
 				window.close();
 		}
 		
@@ -106,7 +104,7 @@ int main()
 
 		window.clear();		// Очистка экрана
 
-		//===========================	Рисовка аквариума	===========================//
+		/*****	Рисовка аквариума	*****/
 		for (int i = 0; i < HEIGHT_MAP; i++)	
 		for (int j = 0; j < WIDTH_MAP; j++)
 		{
@@ -121,7 +119,7 @@ int main()
 			s_map.setPosition(j * 32, i * 32);
 			window.draw(s_map);
 		}
-		//============================================================================//
+		/*****	*****	*****	*****	*****/
 	
 		// Отображение "здоровья" игрока
 		ostringstream health;    
@@ -130,26 +128,43 @@ int main()
 		text.setPosition(70, 0);
 		window.draw(text);	
 
-		window.draw(p.sprite);	// Рисовка игрока
 		p.setTileMap(TileMap); // Текущий TileMap игрока
 		p.update(time);		// Вызов update класса "игрок"
 
 		for (auto it = enemies.begin(); it != enemies.end(); it++){	// Для всех элементов списка врагов
-			window.draw((*it)->sprite);	// Рисовка врага
 			(*it)->setTileMap(TileMap);	// Текущий TileMap врага
 			(*it)->update(time);		// Вызов update класса "враг"
-			if ((*it)->getRect().intersects(p.getRect())){
-				p.health = 0;
-				RenderWindow winDead(VideoMode(200, 50), "Dead");
-				while (winDead.waitEvent(event)){
-					if ((event.type == Event::Closed) || (Keyboard::isKeyPressed(Keyboard::Escape)))
-						winDead.close(); 
-						window.close();
-				}
+			if ((*it)->getRect().intersects(p.getRect())){	// При пересечении:
+				p.health -= 3;				// -3 от здоровья игрока
+				if ((*it)->dir == 0) (*it)->dir = 1; else (*it)->dir = 0;	// изменение направления врага
+			}
+			if (p.life == false){
+				time = 0;	timerShrimp = 0;	// Остановка таймеров
+				p.health = 0;	(*it)->health = 0;	// и персонажей
 			}
 		}
 
+		if (Keyboard::isKeyPressed(Keyboard::Tab)) { return true; }
+		if (Keyboard::isKeyPressed(Keyboard::Escape)) { return false; }
+
+		for (auto it = enemies.begin(); it != enemies.end(); it++){	// Рисовка врагов
+			window.draw((*it)->sprite);
+		}
+		if (p.life == false){
+			text.setString("\t\t*** You're dead ***\n\n[Tab]\t-\trestarting the game.\n\n[Esc]\t-\texit the game.");	// Справка о возможных действиях
+			text.setPosition(400, 200);
+			window.draw(text);
+		}
+		window.draw(p.sprite);	// Рисовка игрока
 		window.display();	// Отрисовка окна
 	}
+}
+/*****	*****	*****	*****	*****/
+void restart(){
+	if (beginGame()) { restart(); }
+}
+
+int main(){
+	restart();
 	return 0;
 }
